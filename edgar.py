@@ -5,12 +5,30 @@ import csv
 import form4
 import database
 
+
+def downloadDate(date):
+    form4URLs = getForm4URLs(date)
+
+    # Download and parse each Form 4
+    print('We have ' + str(len(form4URLs)) +
+          ' Form 4 URLs for the date ' + str(date))
+    t = []
+    for url in form4URLs:
+        transactions = form4.download(url)
+        for transaction in transactions:
+            t.append(transaction)
+
+    print('Done with download.  Writing to BigQuery...')
+    db = database.database()
+    db.insert(t)
+
+
 def getForm4URLs(date):
     print('Composing the URL of the master file...')
     year = str(date.year)
     quarter = 'QTR' + str(math.ceil(date.month / 3))
     date = date.strftime('%Y%m%d')
-    url = 'https://www.sec.gov/Archives/edgar/daily-index/'+ year + '/' + quarter + '/master.' + date + '.idx'
+    url = 'https://www.sec.gov/Archives/edgar/daily-index/' + year + '/' + quarter + '/master.' + date + '.idx'
     print('The URL of the master file is ' + url)
 
     print('Downloading the master file...')
@@ -23,7 +41,7 @@ def getForm4URLs(date):
     text = data.decode('utf-8')
 
     print('Parsing the master file...')
-    form4URLs=[]
+    form4URLs = []
     file = io.StringIO(text)
     reader = csv.reader(file, delimiter='|')
     for row in reader:
@@ -35,18 +53,3 @@ def getForm4URLs(date):
             form4URLs.append('https://www.sec.gov/Archives/' + row[4])
 
     return form4URLs
-
-def downloadDate(date):
-    form4URLs=getForm4URLs(date)
-
-    # Download and parse each Form 4
-    print('We have ' + str(len(form4URLs)) + ' Form 4 URLs for the date ' + str(date))
-    t=[]
-    for url in form4URLs:
-        transactions = form4.download(url)
-        for transaction in transactions:
-            t.append(transaction)
-
-    print('Done with download.  Writing to BigQuery...')
-    db = database.database()
-    db.insert(t)

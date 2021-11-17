@@ -24,9 +24,7 @@ def parse(file):
     file.close()
 
     # need to delete everything after: </ownershipDocument>
-    seperator = '</XML>'
-    contents = contents.split(seperator, 1)[0]
-
+    contents = contents.split('</XML>', 1)[0]
     ownershipDocument = xmltodict.xmltodict(contents)
 
     issuerTradingSymbol = ownershipDocument['issuer'][0]['issuerTradingSymbol'][0]
@@ -107,7 +105,7 @@ def convertToBoolean(s):
         return False
     elif s == '1':
         return True
-    if s == 'false':
+    elif s == 'false':
         return False
     elif s == 'true':
         return True

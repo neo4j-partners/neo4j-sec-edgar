@@ -4,6 +4,7 @@ import google.api_core.exceptions
 # probably need a function to de-dup the table
 # that would be called at the end of the day
 
+
 class database():
     client = None
     dataset_ref = None
@@ -51,14 +52,15 @@ class database():
         hour = transaction['acceptanceDatetime'][8:10]
         minute = transaction['acceptanceDatetime'][10:12]
         second = transaction['acceptanceDatetime'][12:14]
-        acceptanceDatetime = year + '-' + month + '-' + day + 'T' + hour + ':' + minute + ':' + second
+        acceptanceDatetime = year + '-' + month + '-' + \
+            day + 'T' + hour + ':' + minute + ':' + second
 
         year = transaction['transactionDate'][0:4]
         month = transaction['transactionDate'][5:7]
         day = transaction['transactionDate'][8:10]
         transactionDate = year + '-' + month + '-' + day
 
-        if(transaction['transactionAcquiredDisposedCode']=='A'):
+        if(transaction['transactionAcquiredDisposedCode'] == 'A'):
             transactionAcquired = True
         else:
             transactionAcquired = False
@@ -82,11 +84,11 @@ class database():
         return row
 
     def insert(self, transactions):
-        rows=[]
+        rows = []
         for transaction in transactions:
             row = self.formatRow(transaction)
             rows.append(row)
 
-        if len(rows)>0:
+        if len(rows) > 0:
             errors = self.client.insert_rows(self.table, rows)
             assert errors == []
