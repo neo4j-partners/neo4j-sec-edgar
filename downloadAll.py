@@ -9,6 +9,7 @@ def run():
         date = date - datetime.timedelta(days=1)
         print(date)
         edgar.downloadDate(date)
+        break
 
 
 run()

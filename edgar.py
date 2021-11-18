@@ -1,5 +1,5 @@
 import math
-import urllib.request
+import http.client
 import io
 import csv
 import form4
@@ -10,8 +10,7 @@ def downloadDate(date):
     form4URLs = getForm4URLs(date)
 
     # Download and parse each Form 4
-    print('We have ' + str(len(form4URLs)) +
-          ' Form 4 URLs for the date ' + str(date))
+    print('We have ' + str(len(form4URLs)) + ' Form 4 URLs for the date ' + str(date))
     t = []
     for url in form4URLs:
         transactions = form4.download(url)
@@ -28,18 +27,28 @@ def getForm4URLs(date):
     year = str(date.year)
     quarter = 'QTR' + str(math.ceil(date.month / 3))
     date = date.strftime('%Y%m%d')
-    url = 'https://www.sec.gov/Archives/edgar/daily-index/' + year + '/' + quarter + '/master.' + date + '.idx'
+    path = '/Archives/edgar/daily-index/' + year + '/' + quarter + '/master.' + date + '.idx'
+    url = 'https://www.sec.gov' + path
     print('The URL of the master file is ' + url)
 
     print('Downloading the master file...')
-    try:
-        response = urllib.request.urlopen(url)
-    except urllib.error.HTTPError:
-        print('No master file for today.')
-        return []
+    conn = http.client.HTTPSConnection('www.sec.gov')
+    conn.request('GET', path)
+    response = conn.getresponse()
+    print(response.status, response.reason)
     data = response.read()
-    text = data.decode('utf-8')
+    conn.close()
 
+    if response.status == 200 and response.reason == 'OK':
+        text = data.decode('windows-1252')
+        form4URLs = parseMasterFile(text)
+        return form4URLs
+    else:
+        print('Download failed for master file.')
+        return []
+
+
+def parseMasterFile(text):
     print('Parsing the master file...')
     form4URLs = []
     file = io.StringIO(text)
