@@ -1,8 +1,26 @@
 import xmltodict
-import urllib
+import http.client
 import io
 
 
+def download(path):
+    conn = http.client.HTTPSConnection('www.sec.gov')
+    conn.request('GET', path, headers={'User-Agent': 'Neo4j Ben.Lackey@Neo4j.com'})
+    response = conn.getresponse()
+    print(response.status, response.reason)
+    data = response.read()
+    conn.close()
+
+    if response.status == 200 and response.reason == 'OK':
+        text = data.decode('utf-8')
+        file = io.StringIO(text)
+        transactions = parse(file)
+        return transactions
+    else:
+        print('Download failed for form4 file.')
+        return []
+    
+    
 def parse(file):
     for line in file:
         if line.startswith('<SEC-DOCUMENT>'):
@@ -111,19 +129,3 @@ def convertToBoolean(s):
         return True
     else:
         print('Cannot figure out correct value.')
-
-
-def download(url):
-    response = None
-    while not response:
-        try:
-            response = urllib.request.urlopen(url)
-        except urllib.error.URLError as e:
-            print(e.reason)
-            response = None
-
-    data = response.read()
-    text = data.decode('utf-8')
-    file = io.StringIO(text)
-    transactions = parse(file)
-    return transactions

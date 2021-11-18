@@ -7,13 +7,13 @@ import database
 
 
 def downloadDate(date):
-    form4URLs = getForm4URLs(date)
+    form4Paths = getForm4URLs(date)
 
     # Download and parse each Form 4
-    print('We have ' + str(len(form4URLs)) + ' Form 4 URLs for the date ' + str(date))
+    print('We have ' + str(len(form4Paths)) + ' Form 4 URLs for the date ' + str(date))
     t = []
-    for url in form4URLs:
-        transactions = form4.download(url)
+    for path in form4Paths:
+        transactions = form4.download(path)
         for transaction in transactions:
             t.append(transaction)
 
@@ -41,8 +41,8 @@ def getForm4URLs(date):
 
     if response.status == 200 and response.reason == 'OK':
         text = data.decode('windows-1252')
-        form4URLs = parseMasterFile(text)
-        return form4URLs
+        form4Paths = parseMasterFile(text)
+        return form4Paths
     else:
         print('Download failed for master file.')
         return []
@@ -50,7 +50,7 @@ def getForm4URLs(date):
 
 def parseMasterFile(text):
     print('Parsing the master file...')
-    form4URLs = []
+    form4Paths = []
     file = io.StringIO(text)
     reader = csv.reader(file, delimiter='|')
     for row in reader:
@@ -59,6 +59,6 @@ def parseMasterFile(text):
             pass
         elif row[2] == '4':
             # This is a Form 4
-            form4URLs.append('https://www.sec.gov/Archives/' + row[4])
+            form4Paths.append('/Archives/' + row[4])
 
-    return form4URLs
+    return form4Paths
