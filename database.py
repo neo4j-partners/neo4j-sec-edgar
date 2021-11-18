@@ -14,7 +14,7 @@ class database():
 
     def __init__(self):
         self.client = bigquery.Client()
-        self.dataset_ref = self.client.dataset('downloader')
+        self.dataset_ref = self.client.dataset('edgar')
         self.table_ref = self.dataset_ref.table('form4')
 
         self.schema = [
