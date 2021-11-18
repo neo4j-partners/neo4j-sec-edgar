@@ -7,7 +7,6 @@ def download(path):
     conn = http.client.HTTPSConnection('www.sec.gov')
     conn.request('GET', path, headers={'User-Agent': 'Neo4j Ben.Lackey@Neo4j.com'})
     response = conn.getresponse()
-    print(response.status, response.reason)
     data = response.read()
     conn.close()
 
@@ -18,6 +17,7 @@ def download(path):
         return transactions
     else:
         print('Download failed for form4 file.')
+        print(response.status, response.reason)
         return []
     
     
