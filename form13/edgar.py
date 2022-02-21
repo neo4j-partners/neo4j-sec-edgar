@@ -2,7 +2,7 @@ import math
 import http.client
 import io
 import csv
-#import form13
+import form13
 #import database
 
 
@@ -13,8 +13,7 @@ def downloadDate(date):
     print('We have ' + str(len(form13Paths)) + ' Form 13 URLs for the date ' + str(date))
     t = []
     for path in form13Paths:
-        print(path)
-    #    transactions = form13.download(path)
+        transactions = form13.download(path)
     #    for transaction in transactions:
     #        t.append(transaction)
 
