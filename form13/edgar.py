@@ -57,7 +57,7 @@ def parseMasterFile(text):
         if len(row) != 5:
             # This is a header
             pass
-        elif row[2] == '13':
+        elif '13' in row[2]:
             # This is a Form 13
             form4Paths.append('/Archives/' + row[4])
 
