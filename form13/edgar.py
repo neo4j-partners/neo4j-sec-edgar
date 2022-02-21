@@ -12,7 +12,8 @@ def downloadDate(date):
     # Download and parse each Form 13
     print('We have ' + str(len(form13Paths)) + ' Form 13 URLs for the date ' + str(date))
     t = []
-    #for path in form13Paths:
+    for path in form13Paths:
+        print(path)
     #    transactions = form13.download(path)
     #    for transaction in transactions:
     #        t.append(transaction)
