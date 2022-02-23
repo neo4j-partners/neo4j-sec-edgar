@@ -15,7 +15,7 @@ class database():
 
         self.schema = [
             bigquery.SchemaField('fillingManager', 'STRING'),
-            bigquery.SchemaField('reportCalendarOrQuarter', 'DATETIME'),
+            bigquery.SchemaField('reportCalendarOrQuarter', 'DATE'),
             bigquery.SchemaField('nameOfIssuer', 'STRING'),
             bigquery.SchemaField('cusip', 'STRING'),
             bigquery.SchemaField('value', 'FLOAT'),
@@ -34,7 +34,29 @@ class database():
         self.table = self.client.get_table(self.table_ref)
 
 
-    def insert(self, rows):
+    def formatRow(self, filing):
+        month = filing['reportCalendarOrQuarter'][0:2]
+        day = filing['reportCalendarOrQuarter'][3:5]
+        year = filing['reportCalendarOrQuarter'][6:10]
+        reportCalendarOrQuarter = year + '-' + month + '-' + day
+
+        row = (
+            filing['fillingManager'],
+            reportCalendarOrQuarter,
+            filing['nameOfIssuer'],
+            filing['cusip'],
+            filing['value'],
+            filing['shares']
+        )
+        return row
+
+
+    def insert(self, filings):
+        rows = []
+        for filing in filings:
+            row = self.formatRow(filing)
+            rows.append(row)
+
         if len(rows) > 0:
             print(rows[0])
             errors = self.client.insert_rows(self.table, rows)
