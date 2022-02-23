@@ -3,7 +3,7 @@ import http.client
 import io
 import csv
 import form13
-#import database
+import database
 
 
 def downloadDate(date):
@@ -17,9 +17,9 @@ def downloadDate(date):
         for filing in filings:
             f.append(filing)
 
-    #print('Done with download.  Writing to BigQuery...')
-    #db = database.database()
-    #db.insert(f)
+    print('Done with download.  Writing to BigQuery...')
+    db = database.database()
+    db.insert(f)
 
 
 def getForm13URLs(date):

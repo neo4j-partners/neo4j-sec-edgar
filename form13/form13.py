@@ -48,12 +48,12 @@ def parse(file):
     filings = []
     for infoTable in informationTable['infoTable']:
         filing = {}
+        filing['fillingManager'] = fillingManager
+        filing['reportCalendarOrQuarter'] = reportCalendarOrQuarter
         filing['nameOfIssuer'] = infoTable['nameOfIssuer'][0]
         filing['cusip'] = infoTable['cusip'][0]
         filing['value'] = infoTable['value'][0]
         filing['shares'] = infoTable['shrsOrPrnAmt'][0]['sshPrnamt'][0]
-        filing['reportCalendarOrQuarter'] = reportCalendarOrQuarter
-        filing['fillingManager'] = fillingManager
         filings.append(filing)
 
     return filings
