@@ -7,6 +7,19 @@ def xmltodict(xmlstring):
     return elementtodict(doc.documentElement)
 
 
+def remove_whilespace_nodes(node, unlink=True):
+    remove_list = []
+    for child in node.childNodes:
+        if child.nodeType == xml.dom.Node.TEXT_NODE and not child.data.strip():
+            remove_list.append(child)
+        elif child.hasChildNodes():
+            remove_whilespace_nodes(child, unlink)
+    for node in remove_list:
+        node.parentNode.removeChild(node)
+        if unlink:
+            node.unlink()
+
+
 def elementtodict(parent):
     child = parent.firstChild
     if (not child):
@@ -24,16 +37,3 @@ def elementtodict(parent):
             d[child.tagName].append(elementtodict(child))
         child = child.nextSibling
     return d
-
-
-def remove_whilespace_nodes(node, unlink=True):
-    remove_list = []
-    for child in node.childNodes:
-        if child.nodeType == xml.dom.Node.TEXT_NODE and not child.data.strip():
-            remove_list.append(child)
-        elif child.hasChildNodes():
-            remove_whilespace_nodes(child, unlink)
-    for node in remove_list:
-        node.parentNode.removeChild(node)
-        if unlink:
-            node.unlink()

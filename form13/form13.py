@@ -12,6 +12,7 @@ def download(path):
     conn.close()
 
     if response.status == 200 and response.reason == 'OK':
+        print('http://sec.gov' + path)
         text = data.decode('utf-8')
         file = io.StringIO(text)
         transactions = parse(file)
@@ -23,61 +24,32 @@ def download(path):
     
     
 def parse(file):
-    for line in file:
-        if line.startswith('<SEC-DOCUMENT>'):
-            secDocument = line.replace('<SEC-DOCUMENT>', '')
-            secDocument = secDocument.strip()
-            break
-
-    for line in file:
-        if line.startswith('<ACCEPTANCE-DATETIME>'):
-            acceptanceDatetime = line.replace('<ACCEPTANCE-DATETIME>', '')
-            acceptanceDatetime = acceptanceDatetime.strip()
-            break
-
-    for line in file:
-        if line.startswith('<?xml version="1.0"?>'):
-            break
-
     contents = file.read()
     file.close()
 
-    contents = contents.split('</XML>')
-    edgarSubmission = contents[0]
-    print(edgarSubmission)
+    contents = contents.split('<XML>')
+    edgarSubmission = contents[1]
+    edgarSubmission = edgarSubmission.split('</XML>')[0]
+    edgarSubmission = edgarSubmission.split('\n',1)[1]
     edgarSubmission = xmltodict.xmltodict(edgarSubmission)
-    print(edgarSubmission)
 
-    #informationTable = contents[1]
-    #informationTable = informationTable.split('<?xml version="1.0"?>')[1]
-    #informationTable = xmltodict.xmltodict(informationTable)
-    #print(informationTable)
+    informationTable = contents[2]
+    informationTable = informationTable.split('</XML>')[0]
+    informationTable = informationTable.split('\n',1)[1]
+    informationTable = xmltodict.xmltodict(informationTable)
 
-    '''
-    issuerTradingSymbol = ownershipDocument['issuer'][0]['issuerTradingSymbol'][0]
-    rptOwnerCik = ownershipDocument['reportingOwner'][0]['reportingOwnerId'][0]['rptOwnerCik'][0]
-    rptOwnerName = ownershipDocument['reportingOwner'][0]['reportingOwnerId'][0]['rptOwnerName'][0]
-
-    try:
-        isDirector = ownershipDocument['reportingOwner'][0]['reportingOwnerRelationship'][0]['isDirector'][0]
-        isDirector = convertToBoolean(isDirector)
-    except KeyError:
-        isDirector = False
-    '''
-    
+    reportCalendarOrQuarter = edgarSubmission['formData'][0]['coverPage'][0]['reportCalendarOrQuarter'][0]
+    fillingManager = edgarSubmission['formData'][0]['coverPage'][0]['filingManager'][0]['name'][0]
 
     filings = []
+    for infoTable in informationTable['infoTable']:
+        filing = {}
+        filing['nameOfIssuer'] = infoTable['nameOfIssuer'][0]
+        filing['cusip'] = infoTable['cusip'][0]
+        filing['value'] = infoTable['value'][0]
+        filing['shares'] = infoTable['shrsOrPrnAmt'][0]['sshPrnamt'][0]
+        filing['reportCalendarOrQuarter'] = reportCalendarOrQuarter
+        filing['fillingManager'] = fillingManager
+        filings.append(filing)
+
     return filings
-
-
-def convertToBoolean(s):
-    if s == '0':
-        return False
-    elif s == '1':
-        return True
-    elif s == 'false':
-        return False
-    elif s == 'true':
-        return True
-    else:
-        print('Cannot figure out correct value.')

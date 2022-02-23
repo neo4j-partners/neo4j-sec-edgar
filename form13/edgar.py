@@ -11,15 +11,15 @@ def downloadDate(date):
 
     # Download and parse each Form 13
     print('We have ' + str(len(form13Paths)) + ' Form 13 URLs for the date ' + str(date))
-    t = []
+    f = []
     for path in form13Paths:
-        transactions = form13.download(path)
-    #    for transaction in transactions:
-    #        t.append(transaction)
+        filings = form13.download(path)
+        for filing in filings:
+            f.append(filing)
 
     #print('Done with download.  Writing to BigQuery...')
     #db = database.database()
-    #db.insert(t)
+    #db.insert(f)
 
 
 def getForm13URLs(date):
