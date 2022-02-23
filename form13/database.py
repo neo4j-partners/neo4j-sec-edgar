@@ -58,6 +58,5 @@ class database():
             rows.append(row)
 
         if len(rows) > 0:
-            print(rows[0])
             errors = self.client.insert_rows(self.table, rows)
             assert errors == []
