@@ -28,11 +28,9 @@ def parse(file):
     file.close()
 
     # hacky way to trim namespace.  Should probably come back and parse properly later
-    contents = contents.replace('<ns1:', '<')
-    contents = contents.replace('</ns1:', '</')
-
-    contents = contents.replace('<n1:', '<')
-    contents = contents.replace('</n1:', '</')
+    for x in 'ns1', 'ns2', 'ns3', 'ns4', 'n1', 'n2', 'n3', 'n4':
+        contents = contents.replace('<' + x + ':', '<')
+        contents = contents.replace('</' + x + ':', '</')
     
     contents = contents.split('<XML>')
     edgarSubmission = contents[1]
