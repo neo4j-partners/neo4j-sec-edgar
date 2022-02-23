@@ -23,7 +23,6 @@ def downloadDate(date):
 
     if len(f) > 0:
         with open(str(date) + '.csv', 'w') as csvfile:
-            print(f[0])
             writer = csv.DictWriter(csvfile, fieldnames = f[0].keys())
             writer.writeheader()
             writer.writerows(f)
