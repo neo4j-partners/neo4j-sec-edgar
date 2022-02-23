@@ -1,4 +1,4 @@
-## form4
+# form4
 To start the downloader, run this:
 
     screen -S edgar
