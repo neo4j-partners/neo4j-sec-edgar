@@ -1,5 +1,6 @@
 from google.cloud import bigquery
 import google.api_core.exceptions
+import time
 
 class database():
     client = None
@@ -27,6 +28,9 @@ class database():
         # Create the table or pass if it already exists
         try:
             self.table = self.client.create_table(self.table)
+
+            # It seems like it takes a bit for the table creation to reflect in the API
+            time.sleep(5)
         except google.api_core.exceptions.Conflict:
             pass
 
