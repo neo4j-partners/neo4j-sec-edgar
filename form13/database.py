@@ -27,6 +27,7 @@ class database():
         # Create the table or pass if it already exists
         try:
             self.table = self.client.create_table(self.table)
+            self.table_ref = self.dataset_ref.table('form13')
         except google.api_core.exceptions.Conflict:
             pass
 
