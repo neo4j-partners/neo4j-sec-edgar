@@ -36,5 +36,6 @@ class database():
 
     def insert(self, rows):
         if len(rows) > 0:
+            print(rows[0])
             errors = self.client.insert_rows(self.table, rows)
             assert errors == []
