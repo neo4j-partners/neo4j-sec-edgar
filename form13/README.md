@@ -5,9 +5,14 @@ The form 13 FAQ is [here](https://www.sec.gov/divisions/investment/13ffaq.htm).
 Install dependencies:
 
     sudo apt update
-    sudo apt -y install python3 python3-dev python3-venv python3-pip
+    sudo apt -y install python3 python3-dev python3-venv wget
+    sudo python3 get-pip.py
     sudo pip3 install --upgrade google-api-python-client
     sudo pip3 install --upgrade google-cloud-bigquery
+
+Setup the enviromental variables:
+
+    gcloud init
 
 ## Run
 To start the downloader, run this:
