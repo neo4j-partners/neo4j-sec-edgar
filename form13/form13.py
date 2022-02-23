@@ -48,13 +48,20 @@ def parse(file):
 
     filings = []
     for infoTable in informationTable['infoTable']:
-        filing = {}
-        filing['filingManager'] = filingManager
-        filing['reportCalendarOrQuarter'] = reportCalendarOrQuarter
-        filing['nameOfIssuer'] = infoTable['nameOfIssuer'][0]
-        filing['cusip'] = infoTable['cusip'][0]
-        filing['value'] = infoTable['value'][0]
-        filing['shares'] = infoTable['shrsOrPrnAmt'][0]['sshPrnamt'][0]
-        filings.append(filing)
+        # Only want stock holdings, not options
+        if(infoTable['shrsOrPrnAmt'][0]['sshPrnamtType'][0]!='SH'):
+            pass
+        # Only want holdings over $10m
+        elif(float(infoTable['value'][0])*1000<10000000):
+            pass
+        else:
+            filing = {}
+            filing['filingManager'] = filingManager
+            filing['reportCalendarOrQuarter'] = reportCalendarOrQuarter
+            filing['nameOfIssuer'] = infoTable['nameOfIssuer'][0]
+            filing['cusip'] = infoTable['cusip'][0]
+            filing['value'] = infoTable['value'][0] + '000'
+            filing['shares'] = infoTable['shrsOrPrnAmt'][0]['sshPrnamt'][0]
+            filings.append(filing)
 
     return filings
