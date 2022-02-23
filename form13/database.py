@@ -25,9 +25,10 @@ class database():
         self.table = bigquery.Table(self.table_ref, schema=self.schema)
 
         # Create the table or pass if it already exists
+        # I can't figure out how to update the client once the table has been created.  
+        # Just running twice for now.
         try:
             self.table = self.client.create_table(self.table)
-            self.table_ref = self.dataset_ref.table('form13')
         except google.api_core.exceptions.Conflict:
             pass
 
