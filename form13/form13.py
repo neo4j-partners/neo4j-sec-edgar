@@ -44,13 +44,14 @@ def parse(file):
 
     contents = contents.split('</XML>')
     edgarSubmission = contents[0]
+    print(edgarSubmission)
     edgarSubmission = xmltodict.xmltodict(edgarSubmission)
     print(edgarSubmission)
 
-    informationTable = contents[1]
-    informationTable = informationTable.split('<?xml version="1.0"?>')[1]
-    informationTable = xmltodict.xmltodict(informationTable)
-    print(informationTable)
+    #informationTable = contents[1]
+    #informationTable = informationTable.split('<?xml version="1.0"?>')[1]
+    #informationTable = xmltodict.xmltodict(informationTable)
+    #print(informationTable)
 
     '''
     issuerTradingSymbol = ownershipDocument['issuer'][0]['issuerTradingSymbol'][0]
