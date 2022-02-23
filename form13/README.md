@@ -23,6 +23,10 @@ To start the downloader, run this:
 
 Then type ^ad to detach.
 
+## Copy data to bucket
+
+    gsutil cp *.csv gs://neo4j-datasets
+
 ## Loading data into Neo4j
 First off, create an AuraDS instance.
 
