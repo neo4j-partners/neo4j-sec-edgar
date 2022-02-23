@@ -22,3 +22,10 @@ To start the downloader, run this:
     python3 download.py
 
 Then type ^ad to detach.
+
+## Loading data into Neo4j
+First off, create an AuraDS instance.  Then login and run:
+    
+    LOAD CSV WITH HEADERS FROM 'https://storage.googleapis.com/neo4j-datasets/form13-2022-02-17.csv' AS row
+    
+

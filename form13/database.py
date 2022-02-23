@@ -14,7 +14,7 @@ class database():
         self.table_ref = self.dataset_ref.table('form13')
 
         self.schema = [
-            bigquery.SchemaField('fillingManager', 'STRING'),
+            bigquery.SchemaField('filingManager', 'STRING'),
             bigquery.SchemaField('reportCalendarOrQuarter', 'DATE'),
             bigquery.SchemaField('nameOfIssuer', 'STRING'),
             bigquery.SchemaField('cusip', 'STRING'),
@@ -43,7 +43,7 @@ class database():
         reportCalendarOrQuarter = year + '-' + month + '-' + day
 
         row = (
-            filing['fillingManager'],
+            filing['filingManager'],
             reportCalendarOrQuarter,
             filing['nameOfIssuer'],
             filing['cusip'],

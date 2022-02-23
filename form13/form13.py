@@ -44,12 +44,12 @@ def parse(file):
     informationTable = xmltodict.xmltodict(informationTable)
 
     reportCalendarOrQuarter = edgarSubmission['formData'][0]['coverPage'][0]['reportCalendarOrQuarter'][0]
-    fillingManager = edgarSubmission['formData'][0]['coverPage'][0]['filingManager'][0]['name'][0]
+    filingManager = edgarSubmission['formData'][0]['coverPage'][0]['filingManager'][0]['name'][0]
 
     filings = []
     for infoTable in informationTable['infoTable']:
         filing = {}
-        filing['fillingManager'] = fillingManager
+        filing['filingManager'] = filingManager
         filing['reportCalendarOrQuarter'] = reportCalendarOrQuarter
         filing['nameOfIssuer'] = infoTable['nameOfIssuer'][0]
         filing['cusip'] = infoTable['cusip'][0]
