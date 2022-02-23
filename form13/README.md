@@ -24,8 +24,18 @@ To start the downloader, run this:
 Then type ^ad to detach.
 
 ## Loading data into Neo4j
-First off, create an AuraDS instance.  Then login and run:
-    
-    LOAD CSV WITH HEADERS FROM 'https://storage.googleapis.com/neo4j-datasets/form13-2022-02-17.csv' AS row
-    
+First off, create an AuraDS instance.
 
+To delete the contents of the database, you can run:
+
+    MATCH (n)
+    DETACH DELETE n;
+
+To load the dataset run:
+
+    LOAD CSV WITH HEADERS FROM 'https://storage.googleapis.com/neo4j-datasets/2022-02-17.csv' AS row
+    MERGE (m:Manager {filingManager:row.filingManager, reportCalendarOrQuarter:row.reportCalendarOrQuarter})
+    MERGE (h:Holding {nameOfIssuer:row.nameOfIssuer, cusip:row.cusip, value:row.value, shares:row.shares})
+    MERGE (c:Company {nameOfIssuer:row.nameOfIssuer, cusip:row.cusip})
+    MERGE (m)-[r1:OWNS]->(h)
+    MERGE (h)-[r2:IS_PART_OF]->(c)
