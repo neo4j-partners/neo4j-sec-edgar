@@ -54,6 +54,9 @@ def parse(file):
         # Only want holdings over $10m
         elif(float(infoTable['value'][0])*1000<10000000):
             pass
+        # Only want common stock
+        elif(infoTable['titleOfClass'][0]!='COM'):
+            pass
         else:
             filing = {}
             filing['filingManager'] = filingManager
