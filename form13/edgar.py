@@ -22,7 +22,7 @@ def downloadDate(date):
     #db.insert(f)
 
     if len(f) > 0:
-        with open(str(date) + '.csv', 'w') as csvfile:
+        with open('../data/form13/' + str(date) + '.csv', 'w') as csvfile:
             writer = csv.DictWriter(csvfile, fieldnames = f[0].keys())
             writer.writeheader()
             writer.writerows(f)
