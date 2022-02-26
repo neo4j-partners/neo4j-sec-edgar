@@ -44,7 +44,7 @@ def parse(file):
     informationTable = contents[2]
     informationTable = informationTable.split('</XML>')[0]
     informationTable = informationTable.split('\n',1)[1]
-    informationTable = informationTable.replace('" ', '"')
+    informationTable = informationTable.replace('" http', '"http')
     try:
         informationTable = xmltodict.xmltodict(informationTable)
     except:
