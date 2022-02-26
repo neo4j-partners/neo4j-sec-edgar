@@ -42,6 +42,7 @@ def parse(file):
     filingManager = edgarSubmission['formData'][0]['coverPage'][0]['filingManager'][0]['name'][0]
 
     if len(contents) < 3:
+        print ('Empty informationTable.')
         return []
 
     informationTable = contents[2]
