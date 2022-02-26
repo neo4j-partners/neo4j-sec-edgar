@@ -4,7 +4,7 @@ import edgar
 
 def run():
     date = datetime.date.today()
-    date = datetime.date(2021, 8, 13)
+    date = datetime.date(2021, 5, 18)
 
     while date >= datetime.date(2021, 1, 1):
         date = date - datetime.timedelta(days=1)

@@ -41,6 +41,9 @@ def parse(file):
     reportCalendarOrQuarter = edgarSubmission['formData'][0]['coverPage'][0]['reportCalendarOrQuarter'][0]
     filingManager = edgarSubmission['formData'][0]['coverPage'][0]['filingManager'][0]['name'][0]
 
+    if len(contents) < 2:
+        return []
+
     informationTable = contents[2]
     informationTable = informationTable.split('</XML>')[0]
     informationTable = informationTable.split('\n',1)[1]
