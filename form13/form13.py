@@ -28,7 +28,7 @@ def parse(file):
     file.close()
 
     # hacky way to trim namespace.  Should probably come back and parse properly later
-    for x in 'ns1', 'ns2', 'ns3', 'ns4', 'n1', 'n2', 'n3', 'n4', 'eis':
+    for x in 'ns1', 'ns2', 'ns3', 'ns4', 'n1', 'n2', 'n3', 'n4', 'eis', 'N1':
         contents = contents.replace('<' + x + ':', '<')
         contents = contents.replace('</' + x + ':', '</')
     
