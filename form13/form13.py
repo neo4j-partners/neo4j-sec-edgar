@@ -38,13 +38,18 @@ def parse(file):
     edgarSubmission = edgarSubmission.split('\n',1)[1]
     edgarSubmission = xmltodict.xmltodict(edgarSubmission)
 
+    reportCalendarOrQuarter = edgarSubmission['formData'][0]['coverPage'][0]['reportCalendarOrQuarter'][0]
+    filingManager = edgarSubmission['formData'][0]['coverPage'][0]['filingManager'][0]['name'][0]
+
     informationTable = contents[2]
     informationTable = informationTable.split('</XML>')[0]
     informationTable = informationTable.split('\n',1)[1]
-    informationTable = xmltodict.xmltodict(informationTable)
-
-    reportCalendarOrQuarter = edgarSubmission['formData'][0]['coverPage'][0]['reportCalendarOrQuarter'][0]
-    filingManager = edgarSubmission['formData'][0]['coverPage'][0]['filingManager'][0]['name'][0]
+    try:
+        informationTable = xmltodict.xmltodict(informationTable)
+    except:
+        print('Error parsing information table.')
+        print(informationTable)
+        exit()
 
     filings = []
     for infoTable in informationTable['infoTable']:
