@@ -48,7 +48,8 @@ def parse(file):
         informationTable = xmltodict.xmltodict(informationTable)
     except:
         print('Error parsing information table.')
-        print(informationTable)
+        file = open('informationTable.xml', "w") 
+        file.write(informationTable)
         exit()
 
     filings = []
