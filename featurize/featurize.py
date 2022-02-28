@@ -5,6 +5,6 @@ form13 = pandas.DataFrame()
 for file in listdir('../data/'):
     if file.endswith('.csv'):
         print('Processing file: ' + file)
-        form13.append(pandas.read_csv('../data/' + file))
+        form13 = form13.append(pandas.read_csv('../data/' + file))
 
 print(form13)
