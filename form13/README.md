@@ -15,13 +15,20 @@ Setup the enviromental variables:
 
     gcloud init
 
-## Run
+## Download
 To start the downloader, run this:
 
+    cd download
     screen -S edgar
     python3 download.py
 
 Then type ^ad to detach.
+
+## Featurize
+Once you have all the CSVs per date, you're going to want to combine and featurize them.  This will spit out a single CSV.
+
+    cd featurize
+    python3 featurize.py
 
 ## Copy data to bucket
 
