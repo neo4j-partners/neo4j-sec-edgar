@@ -3,7 +3,6 @@ import http.client
 import io
 import csv
 import form13
-#import database
 
 
 def downloadDate(date):
@@ -16,10 +15,6 @@ def downloadDate(date):
         filings = form13.download(path)
         for filing in filings:
             f.append(filing)
-
-    #print('Done with download.  Writing to BigQuery...')
-    #db = database.database()
-    #db.insert(f)
 
     if len(f) > 0:
         with open('../data/form13/' + str(date) + '.csv', 'w') as csvfile:
