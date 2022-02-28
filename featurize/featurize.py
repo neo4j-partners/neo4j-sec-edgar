@@ -41,11 +41,14 @@ for index, row in df.iterrows():
         targetShares = targetRow.head(1)['shares'].iloc[0]
     except:
         pass
-    
+
     if targetShares > shares:
         df.loc[index, 'target'] = True
 
 print('Splitting data and writing files to disk...')
 train = df.loc[df['reportCalendarOrQuarter'] == '03-31-2021']
 train = train.append(df.loc[df['reportCalendarOrQuarter'] == '06-30-2021'])
+train.to_csv('../data/train.csv', index=False)
+
 test = df.loc[df['reportCalendarOrQuarter'] == '09-30-2021']
+test.to_csv('../data/test.csv', index=False)
