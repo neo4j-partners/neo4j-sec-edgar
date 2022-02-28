@@ -12,6 +12,7 @@ Install dependencies:
     sudo python3 get-pip.py
     sudo pip3 install --upgrade google-api-python-client
     sudo pip3 install --upgrade google-cloud-bigquery
+    sudo pip3 install --upgrade pandas
 
 Setup the enviromental variables:
 
