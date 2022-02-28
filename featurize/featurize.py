@@ -23,7 +23,7 @@ for index, row in df.iterrows():
     reportCalendarOrQuarter = row['reportCalendarOrQuarter']
     filingManager = row['filingManager']
     cusip = row['cusip']
-    shares = row['shares'].astype(int)
+    shares = row['shares']
 
     if reportCalendarOrQuarter == '03-31-2021':
         targetReportCalendarOrQuarter = '06-30-2021'
@@ -37,8 +37,8 @@ for index, row in df.iterrows():
     targetRow = df.loc[(df['reportCalendarOrQuarter'] == targetReportCalendarOrQuarter) & (df['filingManager'] == filingManager) & (df['cusip'] == cusip)]
     # We're assuming uniqueness here where it may not be valid.
     # Probably need to go back and ensure we don't download revised filings.
-    targetShares = targetRow.head(1)['shares'].astype(int)
-
+    targetShares = targetRow.head(1)['shares'].iloc[0]
+    
     if targetShares > shares:
         df.loc[index, 'target'] = True
 
