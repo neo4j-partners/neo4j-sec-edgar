@@ -40,7 +40,7 @@ for index, row in df.iterrows():
     try:
         targetShares = targetRow.head(1)['shares'].iloc[0]
     except:
-        pass
+        targetShares = 0
 
     if targetShares > shares:
         df.loc[index, 'target'] = True
