@@ -37,7 +37,10 @@ for index, row in df.iterrows():
     targetRow = df.loc[(df['reportCalendarOrQuarter'] == targetReportCalendarOrQuarter) & (df['filingManager'] == filingManager) & (df['cusip'] == cusip)]
     # We're assuming uniqueness here where it may not be valid.
     # Probably need to go back and ensure we don't download revised filings.
-    targetShares = targetRow.head(1)['shares'].iloc[0]
+    try:
+        targetShares = targetRow.head(1)['shares'].iloc[0]
+    except:
+        pass
     
     if targetShares > shares:
         df.loc[index, 'target'] = True
