@@ -48,6 +48,7 @@ def computeTarget(row):
 for index, row in df.iterrows():
     if index % 1000 == 0:
         print('Computing target for row ' + str(index))
+        break
     row['target'] = computeTarget(row)
 
 df = df.drop(columns=['targetReportCalendarOrQuarter'])
