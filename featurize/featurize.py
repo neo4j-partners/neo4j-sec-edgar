@@ -33,7 +33,7 @@ def computeTargetReportCalendarOrQuarter(reportCalendarOrQuarter):
 
 df['targetReportCalendarOrQuarter'] = df.apply(lambda row: computeTargetReportCalendarOrQuarter(row['reportCalendarOrQuarter']), axis=1)
 
-def computeTarget(df, row):
+def computeTarget(row):
     targetRow = df.loc[(df['reportCalendarOrQuarter'] == row['targetReportCalendarOrQuarter']) & (df['filingManager'] == row['filingManager']) & (df['cusip'] == row['cusip'])]    
     # We're assuming uniqueness here where it may not be valid.
     # Probably need to go back and ensure we don't download revised filings.
@@ -45,7 +45,7 @@ def computeTarget(df, row):
         return True
     return False
 
-df['target'] = df.apply(lambda row: computeTarget(df, row), axis=1)
+df['target'] = df.apply(lambda row: computeTarget(row), axis=1)
 df = df.drop(columns=['targetReportCalendarOrQuarter'])
 
 print('Splitting data and writing files to disk...')
