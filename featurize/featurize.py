@@ -20,8 +20,8 @@ print('Load complete.  Computing targets...')
 df['target']=False
 df = df.reset_index()
 for index, row in df.iterrows():
-    if index % 1000 == 0:
-        print('Processing row: ' + str(index))
+    #if index % 1000 == 0:
+    print('Processing row: ' + str(index))
     
     reportCalendarOrQuarter = row['reportCalendarOrQuarter']
     filingManager = row['filingManager']
