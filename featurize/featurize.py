@@ -45,10 +45,6 @@ def computeTarget(row):
         return True
     return False
 
-for index, row in df.iterrows():
-    if index % 1000 == 0:
-        print('Processing row: ' + str(index))
-
 df['target'] = df.apply(lambda row: computeTarget(row), axis=1)
 df = df.drop(columns=['targetReportCalendarOrQuarter'])
 
