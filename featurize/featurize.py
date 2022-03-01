@@ -7,6 +7,8 @@ for file in listdir('../data/'):
         print('Processing file: ' + file)
         df = df.append(pandas.read_csv('../data/' + file))
 
+print('Cleaning data...')
+
 # This wouldn't be an SEC dataset without a data quality issue.  
 # In this case, we have some report dates of: '3-31-2021' that should be '03-31-2021'
 # Let's fix that...
@@ -16,18 +18,9 @@ df.replace('3-31-2021', '03-31-2021', inplace=True)
 # So, the only data we want is from: '03-31-2021', '06-30-2021', '09-30-2021', '12-31-2021'
 df = df.loc[df['reportCalendarOrQuarter'].str.contains('2021')]
 
-print('Load complete.  Computing targets...')
-df['target']=False
-df = df.reset_index()
-for index, row in df.iterrows():
-    if index % 1000 == 0:
-        print('Processing row: ' + str(index))
-    
-    reportCalendarOrQuarter = row['reportCalendarOrQuarter']
-    filingManager = row['filingManager']
-    cusip = row['cusip']
-    shares = row['shares']
+print('Computing targets...')
 
+def computeTargetReportCalendarOrQuarter(reportCalendarOrQuarter):
     if reportCalendarOrQuarter == '03-31-2021':
         targetReportCalendarOrQuarter = '06-30-2021'
     elif reportCalendarOrQuarter == '06-30-2021':
@@ -36,8 +29,13 @@ for index, row in df.iterrows():
         targetReportCalendarOrQuarter = '12-31-2021'
     elif reportCalendarOrQuarter == '12-31-2021':
         targetReportCalendarOrQuarter = '03-31-2022'
+    return targetReportCalendarOrQuarter
 
-    targetRow = df.loc[(df['reportCalendarOrQuarter'] == targetReportCalendarOrQuarter) & (df['filingManager'] == filingManager) & (df['cusip'] == cusip)]
+df['targetReportCalendarOrQuarter'] = df.apply(lambda row: computeTargetReportCalendarOrQuarter(row['reportCalendarOrQuarter']), axis=1)
+
+def computeTarget(df, row):
+    targetRow = df.loc[(df['reportCalendarOrQuarter'] == row['targetReportCalendarOrQuarter']) & (df['filingManager'] == row['filingManager']) & (df['cusip'] == row['cusip'])]
+
     # We're assuming uniqueness here where it may not be valid.
     # Probably need to go back and ensure we don't download revised filings.
     try:
@@ -45,8 +43,12 @@ for index, row in df.iterrows():
     except:
         targetShares = 0
 
-    if targetShares > shares:
-        df.loc[index, 'target'] = True
+    if targetShares > row['shares']:
+        return True
+    return False
+
+df['target'] = df.apply(lambda row: computeTarget(df, row), axis=1)
+df = df.drop(columns=['targetReportCalendarOrQuarter'])
 
 print('Splitting data and writing files to disk...')
 train = df.loc[df['reportCalendarOrQuarter'] == '03-31-2021']
