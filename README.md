@@ -13,6 +13,7 @@ Install dependencies:
     sudo pip3 install --upgrade google-api-python-client
     sudo pip3 install --upgrade google-cloud-bigquery
     sudo pip3 install --upgrade pandas
+    sudo pip3 install --upgrade tqdm
     
 Setup the enviromental variables:
 

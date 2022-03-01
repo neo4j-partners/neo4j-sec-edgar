@@ -1,5 +1,8 @@
 from os import listdir
+from tqdm import tqdm
 import pandas
+
+tqdm.pandas()
 
 df = pandas.DataFrame()
 for file in listdir('../data/'):
@@ -45,7 +48,7 @@ def computeTarget(row):
         return True
     return False
 
-df['target'] = df.apply(lambda row: computeTarget(row), axis=1)
+df['target'] = df.progress_apply(lambda row: computeTarget(row), axis=1)
 df = df.drop(columns=['targetReportCalendarOrQuarter'])
 
 print('Splitting data and writing files to disk...')
