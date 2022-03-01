@@ -46,6 +46,7 @@ def computeTarget(row):
         return True
     return False
 
+df.reset_index(drop=True)
 df['target'] = df.swifter.apply(lambda row: computeTarget(row), axis=1)
 df = df.drop(columns=['targetReportCalendarOrQuarter'])
 
