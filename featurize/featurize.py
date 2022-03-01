@@ -1,6 +1,5 @@
 from os import listdir
 import pandas
-import swifter
 
 df = pandas.DataFrame()
 for file in listdir('../data/'):
@@ -46,8 +45,11 @@ def computeTarget(row):
         return True
     return False
 
-df.reset_index(drop=True)
-df['target'] = df.swifter.apply(lambda row: computeTarget(row), axis=1)
+for index, row in df.iterrows():
+    if index % 1000 == 0:
+        print('Computing target for row ' + str(index))
+    row['target'] = computeTarget(row)
+
 df = df.drop(columns=['targetReportCalendarOrQuarter'])
 
 print('Splitting data and writing files to disk...')
