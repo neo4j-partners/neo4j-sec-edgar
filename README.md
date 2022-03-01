@@ -13,7 +13,8 @@ Install dependencies:
     sudo pip3 install --upgrade google-api-python-client
     sudo pip3 install --upgrade google-cloud-bigquery
     sudo pip3 install --upgrade pandas
-
+    pip install swifter
+    
 Setup the enviromental variables:
 
     gcloud init
