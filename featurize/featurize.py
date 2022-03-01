@@ -34,15 +34,13 @@ def computeTargetReportCalendarOrQuarter(reportCalendarOrQuarter):
 df['targetReportCalendarOrQuarter'] = df.apply(lambda row: computeTargetReportCalendarOrQuarter(row['reportCalendarOrQuarter']), axis=1)
 
 def computeTarget(df, row):
-    targetRow = df.loc[(df['reportCalendarOrQuarter'] == row['targetReportCalendarOrQuarter']) & (df['filingManager'] == row['filingManager']) & (df['cusip'] == row['cusip'])]
-
+    targetRow = df.loc[(df['reportCalendarOrQuarter'] == row['targetReportCalendarOrQuarter']) & (df['filingManager'] == row['filingManager']) & (df['cusip'] == row['cusip'])]    
     # We're assuming uniqueness here where it may not be valid.
     # Probably need to go back and ensure we don't download revised filings.
     try:
         targetShares = targetRow.head(1)['shares'].iloc[0]
     except:
         targetShares = 0
-
     if targetShares > row['shares']:
         return True
     return False
