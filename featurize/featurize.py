@@ -6,6 +6,8 @@ tqdm.pandas()
 
 df = pandas.DataFrame()
 for file in listdir('../data/'):
+    if file == 'train.csv' or file == 'test.csv':
+        pass
     if file.endswith('.csv'):
         print('Processing file: ' + file)
         df = df.append(pandas.read_csv('../data/' + file))
