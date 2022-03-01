@@ -47,10 +47,9 @@ def computeTarget(row):
 
 for index, row in df.iterrows():
     if index % 1000 == 0:
-        print('Computing target for row ' + str(index))
-        break
-    row['target'] = computeTarget(row)
+        print('Processing row: ' + str(index))
 
+df['target'] = df.apply(lambda row: computeTarget(row), axis=1)
 df = df.drop(columns=['targetReportCalendarOrQuarter'])
 
 print('Splitting data and writing files to disk...')
