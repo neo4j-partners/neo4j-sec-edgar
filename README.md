@@ -7,18 +7,13 @@ EDGAR uses HTTP for access.  A writeup on that is [here](https://www.sec.gov/edg
 Install dependencies:
 
     sudo apt update
-    sudo apt -y install python3 python3-dev python3-venv 
+    sudo apt -y install python3 python3-dev
     sudo apt -y install screen wget
     sudo python3 get-pip.py
     sudo pip3 install --upgrade google-api-python-client
-    sudo pip3 install --upgrade google-cloud-bigquery
     sudo pip3 install --upgrade pandas
     sudo pip3 install --upgrade tqdm
     
-Setup the enviromental variables:
-
-    gcloud init
-
 ## Download
 To start the downloader, run this:
 
@@ -35,20 +30,11 @@ Once you have all the CSVs per date, you're going to want to combine and featuri
     python3 featurize.py
 
 ## Copy data to bucket
+Setup the enviromental variables:
 
-    gsutil cp *.csv gs://neo4j-datasets
+    gcloud init
 
-## Loading data into Neo4j
-First off, create an AuraDS instance.
+Now copy the data:
 
-To load the dataset run:
-
-    LOAD CSV WITH HEADERS FROM 'https://storage.googleapis.com/neo4j-datasets/2022-02-17.csv' AS row
-    MERGE (m:Manager {filingManager:row.filingManager})
-    MERGE (c:Company {nameOfIssuer:row.nameOfIssuer, cusip:row.cusip})
-    MERGE (m)-[r1:Owns {value:toInteger(row.value), shares:toInteger(row.shares), reportCalendarOrQuarter:row.reportCalendarOrQuarter}]->(c)
-
-To delete the contents of the database, you can run:
-
-    MATCH (n)
-    DETACH DELETE n;
+    gsutil cp train.csv gs://neo4j-datasets/form13/
+    gsutil cp test.csv gs://neo4j-datasets/form13/
