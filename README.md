@@ -38,3 +38,11 @@ Now copy the data:
 
     gsutil cp train.csv gs://neo4j-datasets/form13/
     gsutil cp test.csv gs://neo4j-datasets/form13/
+
+If you want to combine the train and test datasets you can run:
+
+    import pandas
+    train=pandas.read_csv('train.csv')
+    test=pandas.read_csv('test.csv')
+    form13=pandas.concat([train,test])
+    form13.to_csv('form13.csv',index=False)
