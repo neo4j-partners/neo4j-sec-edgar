@@ -1,8 +1,7 @@
 # neo4j-sec-edgar-form13
 These scripts download SEC EDGAR data and format it for Neo4j loading and analytics.  They operate specifically on SEC Form 13.  An FAQ on Form 13 is available [here](https://www.sec.gov/divisions/investment/13ffaq.htm). EDGAR uses HTTP for access.  A writeup on that is [here](https://www.sec.gov/edgar/searchedgar/accessing-edgar-data.htm).
 
-This dataset is used by one hands on labs:
-* [hands-on-lab-neo4j-and-sagemaker](https://github.com/neo4j-partners/hands-on-lab-neo4j-and-sagemaker)
+This dataset will be used in the following hands on lab(s):
 * [hands-on-lab-neo4j-and-vertex-ai](https://github.com/neo4j-partners/hands-on-lab-neo4j-and-vertex-ai)
 
 ## Setup
