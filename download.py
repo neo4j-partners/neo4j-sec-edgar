@@ -25,7 +25,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description='Download raw form13s from EDGAR SEC',
                                      formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('-s', '--start-date', default='2022-01-01', help='Start date in the format yyyy-mm-dd')
-    parser.add_argument('-e', '--end-date', default='2023-07-11', help='End date in the format yyyy-mm-dd')
+    parser.add_argument('-e', '--end-date', default='2023-08-01', help='End date in the format yyyy-mm-dd')
     parser.add_argument('-o', '--output-directory', default='data/form13-raw/',
                         help='Local directory to write forms to')
     args = parser.parse_args()

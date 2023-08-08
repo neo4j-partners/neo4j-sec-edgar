@@ -1,15 +1,18 @@
 import argparse
+from datetime import datetime
+from typing import List, Dict
 
 import pandas as pd
 import os
 import re
 import xmltodict
 
-FILING_MANAGER_COL = 'managerName'
+FILING_MANAGER_NAME_COL = 'managerName'
+FILING_MANAGER_CIK_COL = 'managerCik'
 REPORT_PERIOD_COL = 'reportCalendarOrQuarter'
-CUSIP_COL = 'cusip'
-COMPANY_NAME_COL = 'issuerName'
-FILING_ID_COL = 'filingId'
+COMPANY_CUSIP_COL = 'cusip'
+COMPANY_NAME_COL = 'companyName'
+SOURCE_ID_COL = 'sourceFilingId'
 VALUE_COL = 'value'
 SHARES_COL = 'shares'
 
@@ -37,78 +40,85 @@ def parse_args():
     return args
 
 
-def parse(raw_contents: str) -> pd.DataFrame:
-    # hacky way to trim namespace.  Should probably come back and parse properly later
-    # trim literals
-    contents = raw_contents
-    for x in 'ns', 'eis', 'N1', 'n1':
-        contents = contents.replace('<' + x + ':', '<')
-        contents = contents.replace('</' + x + ':', '</')
-    # trim ns patterns
-    ns_pattern = r'ns\d+'
-    contents = re.sub('<' + ns_pattern + ':', '<', contents)
-    contents = re.sub('</' + ns_pattern + ':', '</', contents)
+# function to strip namespaces post xmltodict transformation
+def strip_ns(x):
+    if isinstance(x, dict):
+        x_striped = dict()
+        for k, v in x.items():
+            x_striped[k.split(':')[-1]] = strip_ns(v)
+    elif isinstance(x, list):
+        x_striped = [strip_ns(i) for i in x]
+    else:
+        x_striped = x
+    return x_striped
 
-    contents = contents.split('<XML>')
-    edgar_submission = contents[1]
-    edgar_submission = edgar_submission.split('</XML>')[0]
-    edgar_submission = edgar_submission.split('\n', 1)[1]
-    edgar_submission = xmltodict.xmltodict(edgar_submission)
 
-    report_calendar_or_quarter = edgar_submission['formData'][0]['coverPage'][0]['reportCalendarOrQuarter'][0]
-    filing_manager = edgar_submission['formData'][0]['coverPage'][0]['filingManager'][0]['name'][0]
+def extract_submission_info(contents: str) -> str:
+    xml = contents[1].split('</XML>')[0].strip()
+    return strip_ns(xmltodict.parse(xml))['edgarSubmission']
 
-    if len(contents) < 3:
-        print('Empty informationTable.')
-        return []
 
-    information_table = contents[2]
-    information_table = information_table.split('</XML>')[0]
-    information_table = information_table.split('\n', 1)[1]
-    information_table = information_table.replace('" http', '"http', 1)  # deal with bad XML from BNY Mellon
-    information_table = information_table.replace(' ">', '">', 1)  # deal with bad XML from TCW
-    try:
-        information_table = xmltodict.xmltodict(information_table)
-    except:
-        print('Error parsing information table.')
-        file = open('informationTable.xml', "w")
-        file.write(information_table)
-        exit()
+def extract_investment_info(contents: str) -> str:
+    xml = contents[2].split('</XML>')[0].strip()
+    return strip_ns(xmltodict.parse(xml))['informationTable']['infoTable']
 
-    filings = []
-    for infoTable in information_table['infoTable']:
+
+def filter_and_format(info_tables: str, manager_cik: str, manager_name: str,
+                      report_period: datetime.date) -> List[Dict]:
+    res = []
+    if isinstance(info_tables, dict):
+        info_tables = [info_tables]
+    for info_table in info_tables:
+        # Skip none to report incidences
+        if info_table['cusip'] == '000000000':
+            pass
         # Only want stock holdings, not options
-        if infoTable['shrsOrPrnAmt'][0]['sshPrnamtType'][0] != 'SH':
+        if info_table['shrsOrPrnAmt']['sshPrnamtType'] != 'SH':
             pass
         # Only want holdings over $10m
-        elif (float(infoTable['value'][0]) * 1000) < 10000000:
+        elif (float(info_table['value']) * 1000) < 10000000:
             pass
         # Only want common stock
-        elif infoTable['titleOfClass'][0] != 'COM':
+        elif info_table['titleOfClass'] != 'COM':
             pass
         else:
-            filing = {FILING_MANAGER_COL: filing_manager, REPORT_PERIOD_COL: report_calendar_or_quarter,
-                      COMPANY_NAME_COL: infoTable['nameOfIssuer'][0], CUSIP_COL: infoTable['cusip'][0],
-                      VALUE_COL: infoTable['value'][0].replace(' ', '') + '000',
-                      SHARES_COL: infoTable['shrsOrPrnAmt'][0]['sshPrnamt'][0]}
-            filings.append(filing)
-    return pd.DataFrame(filings)
+            res.append({FILING_MANAGER_CIK_COL: manager_cik,
+                        FILING_MANAGER_NAME_COL: manager_name,
+                        REPORT_PERIOD_COL: report_period,
+                        COMPANY_CUSIP_COL: info_table['cusip'],
+                        COMPANY_NAME_COL: info_table['nameOfIssuer'],
+                        VALUE_COL: info_table['value'].replace(' ', '') + '000',
+                        SHARES_COL: info_table['shrsOrPrnAmt']['sshPrnamt']})
+    return res
+
+
+def extract_dicts(txt: str) -> List[Dict]:
+    contents = txt.split('<XML>')
+    submt_dict = extract_submission_info(contents)
+    mng_cik = submt_dict['headerData']['filerInfo']['filer']['credentials']['cik']
+    mng_name = submt_dict['formData']['coverPage']['filingManager']['name']
+    report_period = submt_dict['formData']['coverPage']['reportCalendarOrQuarter']
+    info_dict = extract_investment_info(contents)
+    return filter_and_format(info_dict, mng_cik, mng_name, report_period)
 
 
 def parse_from_dir(directory_path: str) -> pd.DataFrame:
-    filings_dfs = []
+    # Go through all files and concatenate to dataframe
+    print(f'=== Begin Parsing from {directory_path} ===')
+    filing_dfs = []
     for file_name in os.listdir(directory_path):
         if file_name.endswith('.txt'):
+            print(f'parsing {file_name}')
             file_path = os.path.join(directory_path, file_name)
             with open(file_path, 'r') as file:
-                contents = file.read()
-                tmp_filings_df = parse(contents)
-                tmp_filings_df[FILING_ID_COL] = file_name
-                filings_dfs.append(tmp_filings_df)
-    filing_df = pd.concat(filings_dfs, ignore_index=True)
-    filing_df.reportCalendarOrQuarter = pd.to_datetime(filing_df.reportCalendarOrQuarter).dt.date
-    filing_df.value = filing_df.value.astype(float)
-    filing_df.shares = filing_df.shares.astype(int)
+                filing = extract_dicts(file.read())
+                tmp_filing_df = pd.DataFrame(filing)
+                tmp_filing_df[SOURCE_ID_COL] = file_name
+                filing_dfs.append(tmp_filing_df)
+    filing_df = pd.concat(filing_dfs, ignore_index=True)
+    filing_df[REPORT_PERIOD_COL] = pd.to_datetime(filing_df[REPORT_PERIOD_COL]).dt.date
+    filing_df[VALUE_COL] = filing_df[VALUE_COL].astype(float)
+    filing_df[SHARES_COL] = filing_df[SHARES_COL].astype(int)
     return filing_df
 
 
@@ -117,17 +127,19 @@ def parse_from_dir(directory_path: str) -> pd.DataFrame:
 # See for example https://www.sec.gov/Archives/edgar/data/1962636/000139834423009400/0001398344-23-009400.txt
 # for our intents and purposes we will sum over values and shares to aggregate the duplicates out
 def aggregate_data(filings_df: pd.DataFrame) -> pd.DataFrame:
-    return filings_df.groupby([FILING_MANAGER_COL, REPORT_PERIOD_COL, CUSIP_COL]) \
-        .agg({VALUE_COL: sum, SHARES_COL: sum, FILING_ID_COL: max, COMPANY_NAME_COL: 'first'}) \
+    print(f'=== Aggregating Parsed Data ===')
+    return filings_df.groupby([FILING_MANAGER_NAME_COL, REPORT_PERIOD_COL, COMPANY_CUSIP_COL]) \
+        .agg({VALUE_COL: sum, SHARES_COL: sum, SOURCE_ID_COL: max, COMPANY_NAME_COL: 'first'}) \
         .reset_index()
 
 
 def filter_data(filings_df: pd.DataFrame, top_n_periods: int) -> pd.DataFrame:
+    print(f'=== Filtering Data ===')
     periods_df = filings_df[[REPORT_PERIOD_COL, VALUE_COL]] \
         .groupby(REPORT_PERIOD_COL).count().reset_index().sort_values(REPORT_PERIOD_COL)
     num_periods = min(periods_df.shape[0], top_n_periods)
-    top_periods = periods_df.reportCalendarOrQuarter[-num_periods:].tolist()
-    return filings_df[filings_df.reportCalendarOrQuarter.isin(top_periods)]
+    top_periods = periods_df[REPORT_PERIOD_COL][-num_periods:].tolist()
+    return filings_df[filings_df[REPORT_PERIOD_COL].isin(top_periods)]
 
 
 if __name__ == "__main__":
