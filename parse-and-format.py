@@ -19,11 +19,14 @@ SHARES_COL = 'shares'
 
 def main() -> int:
     args = parse_args()
-    filings_df = parse_from_dir(args.input_directory)
+    filings_df, failures = parse_from_dir(args.input_directory)
     stg_df = aggregate_data(filings_df)
     if args.top_periods is not None:
         stg_df = filter_data(stg_df, args.top_periods)
     stg_df.to_csv(args.output_file, index=False)
+    print(f'===== Had {len(failures)} failed file parsings ====')
+    for failure in failures:
+        print(failure)
     return 0
 
 
@@ -102,24 +105,29 @@ def extract_dicts(txt: str) -> List[Dict]:
     return filter_and_format(info_dict, mng_cik, mng_name, report_period)
 
 
-def parse_from_dir(directory_path: str) -> pd.DataFrame:
+def parse_from_dir(directory_path: str):
     # Go through all files and concatenate to dataframe
     print(f'=== Begin Parsing from {directory_path} ===')
     filing_dfs = []
+    failures = []
     for file_name in os.listdir(directory_path):
         if file_name.endswith('.txt'):
             print(f'parsing {file_name}')
             file_path = os.path.join(directory_path, file_name)
-            with open(file_path, 'r') as file:
-                filing = extract_dicts(file.read())
-                tmp_filing_df = pd.DataFrame(filing)
-                tmp_filing_df[SOURCE_ID_COL] = file_name
-                filing_dfs.append(tmp_filing_df)
+            try:
+                with open(file_path, 'r') as file:
+                    filing = extract_dicts(file.read())
+                    tmp_filing_df = pd.DataFrame(filing)
+                    tmp_filing_df[SOURCE_ID_COL] = file_name
+                    filing_dfs.append(tmp_filing_df)
+            except Exception as e:
+                print(e)
+                failures.append(file_name) 
     filing_df = pd.concat(filing_dfs, ignore_index=True)
     filing_df[REPORT_PERIOD_COL] = pd.to_datetime(filing_df[REPORT_PERIOD_COL]).dt.date
     filing_df[VALUE_COL] = filing_df[VALUE_COL].astype(float)
     filing_df[SHARES_COL] = filing_df[SHARES_COL].astype(int)
-    return filing_df
+    return filing_df, failures
 
 
 # This data contains duplicates where an asset is reported more than once for the same filing manager within the same

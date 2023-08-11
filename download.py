@@ -37,9 +37,12 @@ def download_date(date, output_dir):
     # Download each Form 13
     print('We have ' + str(len(form13_paths)) + ' Form 13 URLs for the date ' + str(date))
     for path in form13_paths:
-        filings = download_form13(path)
-        with open(os.path.join(output_dir, 'raw_' + str(date) + path.replace('/', '_').lower()), 'w') as file:
-            file.write(filings)
+        try:
+            filings = download_form13(path)
+            with open(os.path.join(output_dir, 'raw_' + str(date) + path.replace('/', '_').lower()), 'w') as file:
+                file.write(filings)
+        except Exception as e:
+            print(e)
 
 
 def get_form13_urls(date):
