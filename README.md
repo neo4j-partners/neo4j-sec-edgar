@@ -1,4 +1,4 @@
-# neo4j-sec-edgar-form13
+# Neo4j SEC EDGAR Form 13
 These scripts download SEC EDGAR data and format it for Neo4j loading and analytics.  They operate specifically on SEC Form 13.  An FAQ on Form 13 is available [here](https://www.sec.gov/divisions/investment/13ffaq.htm). EDGAR uses HTTP for access.  A writeup on that is [here](https://www.sec.gov/edgar/searchedgar/accessing-edgar-data.htm).
 
 This dataset will be used in the following hands on lab(s):
@@ -12,8 +12,7 @@ Install dependencies:
     sudo apt -y install screen wget
     sudo python3 get-pip.py
     sudo pip3 install --upgrade google-api-python-client
-    sudo pip3 install --upgrade pandas
-    sudo pip3 install --upgrade tqdm
+    sudo pip3 install --upgrade pandas tqdm xmltodict
 
 ## Download
 To start the downloader, run this:
