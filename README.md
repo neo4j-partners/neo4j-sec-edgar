@@ -1,5 +1,12 @@
-# Neo4j SEC EDGAR Form 13
-These scripts download SEC EDGAR data and format it for Neo4j loading and analytics.  They operate specifically on SEC Form 13.  An FAQ on Form 13 is available [here](https://www.sec.gov/divisions/investment/13ffaq.htm). EDGAR uses HTTP for access.  A writeup on that is [here](https://www.sec.gov/edgar/searchedgar/accessing-edgar-data.htm).
+# Neo4j SEC EDGAR
+This repository contains scripts to download SEC EDGAR data and format it for Neo4j loading and analytics. Specially to 
+
+
+1. obtain information on investment managers and the companies they purchase stock from using Form 13 (scripts in  `form13/` directory). An FAQ on Form 13 is available [here](https://www.sec.gov/divisions/investment/13ffaq.htm).
+2. obtain text from 10K filings for a fraction of the above companies (scripts in  `filing10k/` directory)
+
+
+ EDGAR uses HTTP for access.  A writeup on that is [here](https://www.sec.gov/edgar/searchedgar/accessing-edgar-data.htm).
 
 This dataset will be used in the following hands on lab(s):
 * [hands-on-lab-neo4j-and-vertex-ai](https://github.com/neo4j-partners/hands-on-lab-neo4j-and-vertex-ai)
@@ -15,7 +22,11 @@ Install dependencies:
     sudo pip3 install --upgrade pandas tqdm xmltodict
 
 ## Download
-To start the downloader, run this:
+To start the downloader, change to the form13/ directory 
+
+```cd form13/```
+
+Then run this:
 
 ```python download.py```
 
@@ -27,7 +38,7 @@ optional arguments:
 ```
 
 ## Parse & Format
-Once you have all the raw forms downloaded, this notebook will parse and format them into a csv file.
+Once you have all the raw forms downloaded, this file will parse and format them into a csv file.
 
 ```python parse-and-format.py -p 4```
 
@@ -38,11 +49,8 @@ optional arguments:
 -p, --top-periods, Only include data from `n` most recent report quarters (default: None)
 ```
 
+## Download, Parse and Format 10K Filings __(TODO: Update)__
 
-## Create Machine Learning Data __(TODO: Complete)__
-Create datasets for training a Machine learning model to predict new stock purchases
-
-```python format-ml-data.py```
 
 ## Copy data to bucket __(TODO: Update)__
 Setup the environment variables:
@@ -53,16 +61,3 @@ Now copy the data:
 
     gsutil cp train.csv gs://neo4j-datasets/form13/
     gsutil cp test.csv gs://neo4j-datasets/form13/
-
-## Combine train and test __(TODO: Update)__
-If you want to combine the train and test datasets you can run:
-
-    import pandas
-    train=pandas.read_csv('train.csv')
-    test=pandas.read_csv('test.csv')
-    form13=pandas.concat([train,test])
-    form13.to_csv('form13.csv',index=False)
-
-Then copy it to a bucket with the command:
-
-    gsutil cp form13.csv gs://neo4j-datasets/form13/
