@@ -10,7 +10,6 @@ from secedgar import filings, FilingType
 
 
 def main() -> int:
-    
     args = parse_args()
     start_date = datetime.datetime.strptime(args.start_date, '%Y-%m-%d').date()
     end_date = datetime.datetime.strptime(args.end_date, '%Y-%m-%d').date()
@@ -26,7 +25,7 @@ def main() -> int:
         os.makedirs(temp_dir)
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
-    
+
     count = 0
     total = len(company_list)
     print(f'=== Downloading {total:,} 10K filings ===')
@@ -55,8 +54,9 @@ def main() -> int:
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description='download 10k filings and pull text from sections 1,1A, 7, and 7A from 10-ks and save as json',
-                                     formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    parser = argparse.ArgumentParser(
+        description='download 10k filings and pull text from sections 1,1A, 7, and 7A from 10-ks and save as json',
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('-t', '--temp-directory', required=False, default='data/temp-10k',
                         help='Directory to temporarily store raw SEC 10K files')
     parser.add_argument('-o', '--output-directory', required=False, default='data/form10k-clean',
@@ -71,20 +71,20 @@ def parse_args():
     return args
 
 
+def download_filing(company_name: str, temp_dir: str, user_agent: str, start_date, end_date):
+    filings_obj = filings(cik_lookup=company_name,
+                          filing_type=FilingType.FILING_10K,
+                          user_agent=user_agent,
+                          end_date=end_date,
+                          start_date=start_date)
+    filings_obj.save(temp_dir, dir_pattern='{cik}')
 
-def download_filing(company_name: str, temp_dir: str,  user_agent: str, start_date, end_date):
-            filings_obj = filings(cik_lookup=company_name,
-                                  filing_type=FilingType.FILING_10K,
-                                  user_agent=user_agent,
-                                  end_date=end_date,
-                                  start_date=start_date)
-            filings_obj.save(temp_dir, dir_pattern='{cik}')
-            
-            return os.path.join(temp_dir, company_name)
-            
+    return os.path.join(temp_dir, company_name)
+
 
 def create_company_list(formatted_data_path: str) -> List[str]:
     return pd.read_csv(formatted_data_path, usecols=['companyName']).companyName.unique().tolist()
+
 
 def extract_10_k(txt: str) -> str:
     # Regex to find <DOCUMENT> tags
@@ -152,7 +152,7 @@ def extract_section_text(doc: str) -> Dict[str, str]:
     return res
 
 
-def load_parse_save(input_file_path: str, output_file_path: str, company_name:str):
+def load_parse_save(input_file_path: str, output_file_path: str, company_name: str):
     with open(input_file_path, 'r') as file:
         raw_txt = file.read()
     print('Extracting 10-K')
