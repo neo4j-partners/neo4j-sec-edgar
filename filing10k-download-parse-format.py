@@ -2,11 +2,6 @@ import argparse
 import json
 from typing import Dict, List
 import datetime
-import http.client
-import io
-import math
-import csv
-import requests
 import os
 import re
 import pandas as pd
@@ -40,16 +35,20 @@ def main() -> int:
         print(f'--- Downloading {count:,} of {total:,} 10K filings for {company_name}')
         try:
             raw_files_dir = download_filing(company_name, temp_dir, user_agent, start_date, end_date)
-            filings = os.listdir(raw_files_dir)
+            filing_list = os.listdir(raw_files_dir)
 
-            for filing in filings:
+            parse_exception_flag = False
+            for filing in filing_list:
                 raw_file_path = os.path.join(raw_files_dir, filing)
                 output_file_path = os.path.join(output_dir, filing)
                 try:
                     load_parse_save(raw_file_path, output_file_path, company_name)
                     os.remove(raw_file_path)
                 except Exception as e:
+                    parse_exception_flag = True
                     print(e)
+            if not parse_exception_flag:
+                os.rmdir(raw_files_dir)
         except Exception as e:
             print(e)
     return 0
