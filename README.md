@@ -19,7 +19,13 @@ To run the scripts you will need to install dependencies:
 ## Download
 You can now run the scripts for each form.
 
-## Copy Data to Google Cloud Storage Bucket
+## AWS - Upload to S3
+To do
+
+## Microsoft Azure - Upload to Blob Storage
+To do
+
+## Google Cloud - Upload to Cloud Storage Bucket
 Now that you have Form-13 and Form 10-K you can push them to Google cloud storage.
 
 To do so, set the environment variables:
