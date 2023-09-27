@@ -22,24 +22,7 @@ zip -r form10k-clean.zip form10k-clean/
 cd ..
 ```
 
-## Create Form13 Single Day Sample
-We need a daily sample of form13 data for use in exploration and learning in the labs.  You can run the Python notebook `form13-one-day-sample.ipynb` to create that. It will make a file `./data/form13-2023-05-11.csv`.
-
-
-## Copy Data to Google Cloud Storage Bucket
-Now that you have form13s and 10K filings you can push them to Google cloud storage.
-
-To do so, set the environment variables:
-
-    gcloud init
-
-Now copy the data:
-
-    gsutil cp data/form13.csv gs://neo4j-datasets/form13/form13-v3.csv
-    gsutil cp data/form10k-clean.zip gs://neo4j-datasets/form10k/form10k-v2-clean.zip
-    gsutil cp data/form13-2023-05-11.csv gs://neo4j-datasets/form13/form13-v3-2023-05-11.csv
-
-## 10K Notes
+## Notes
 
 A [10K](https://www.investor.gov/introduction-investing/investing-basics/glossary/form-10-k) is a comprehensive report filed annually by a publicly traded company about its financial performance and is required by the U.S. Securities and Exchange Commission (SEC). The report contains a comprehensive overview of the company's business and financial condition and includes audited financial statements. While 10Ks contain images and table figures, they primarily consist of free-form text which is what we are interested in extracting here.
 

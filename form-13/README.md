@@ -1,7 +1,7 @@
 # form-13
 To start the Form-13 downloader run this:
 
-```python form13-download.py```
+```python download.py```
 
 ```
 optional arguments:
@@ -10,10 +10,10 @@ optional arguments:
 -o, --output-directory, Local directory to write forms to (default: data/form13-raw/)
 ```
 
-## Parse & Format Form13
+## Parse and Format
 Once you have all the raw forms downloaded, this file will parse and format them into a csv file.
 
-```python form13-parse-and-format.py -p 4```
+```python parse-and-format.py -p 4```
 
 ```
 optional arguments:
@@ -21,3 +21,6 @@ optional arguments:
 -o, --output-file, Local path + file name to write formatted csv too (default: data/form13.csv)
 -p, --top-periods, Only include data from `n` most recent report quarters (default: None)
 ```
+
+## Create One Day Sample
+We need a daily sample of form13 data for use in exploration and learning in the labs.  You can run the Python notebook `one-day-sample.ipynb` to create that. It will make a file `./data/form13-2023-05-11.csv`.
