@@ -1,8 +1,8 @@
 # neo4-sec-edgar
 This repository contains scripts to download SEC EDGAR data and format it for Neo4j loading and analytics. Specially to:
 
-1. [form-13](form-13): Obtain information on investment managers and the companies they purchase stock from using Form 13. An FAQ on Form 13 is available [here](https://www.sec.gov/divisions/investment/13ffaq.htm).
-2. [form-10-k](form-10-k): Obtain text from 10-K filings for a fraction of the above companies
+* [form-13](form-13): Obtain information on investment managers and the companies they purchase stock from using Form 13. An FAQ on Form 13 is available [here](https://www.sec.gov/divisions/investment/13ffaq.htm).
+* [form-10-k](form-10-k): Obtain text from 10-K filings for a fraction of the above companies
 
 EDGAR uses HTTP for access.  A writeup on that is [here](https://www.sec.gov/edgar/searchedgar/accessing-edgar-data.htm).
 
