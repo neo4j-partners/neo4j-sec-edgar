@@ -1,6 +1,2 @@
 __pycache__
 *.pyc
-data/
-scratch/
-.idea/
-.DS_Store
