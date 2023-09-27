@@ -26,9 +26,13 @@ To do so, set the environment variables:
 
     gcloud init
 
-Now copy the data:
+Now copy the Form-13 data:
 
     gsutil cp data/form13.csv gs://neo4j-datasets/hands-on-lab/form13-2023.csv
     gsutil cp data/form13-2023-05-11.csv gs://neo4j-datasets/hands-on-lab/form13-2023-05-11.csv
-    gsutil cp data/form10k-clean.zip gs://neo4j-datasets/hands-on-lab/form10k.zip
     # to do - https://github.com/neo4j-partners/neo4j-sec-edgar/issues/4
+
+And copy Form 10-K:
+
+    gsutil cp data/form10k-clean.zip gs://neo4j-datasets/hands-on-lab/form10k.zip
+    
