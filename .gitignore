@@ -1,2 +1,6 @@
+# download folder
+data
+
+# python
 __pycache__
 *.pyc
